@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Scoreboard - WAG 08</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        table { width: 80%; margin: auto; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 10px; }
+        th { background-color: #f4b400; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Live Scoreboard - WAG 08</h1>
+    <table id="scoreboard">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>ID</th>
+                <th>D Score</th>
+                <th>Penalty Score</th>
+                <th>E Score</th>
+                <th>Score</th>
+                <th>Final Score</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+
+
+    <script>
+        const sheetUrl = "https://script.google.com/macros/s/AKfycbx0plyfFMsUUcInYNyjvHe8fF6louZG8RIPzXZScMLh6EiuEo_swaz8QKbBsrdrXHkf/exec"; // Replace with the actual URL
+    
+        async function fetchScores() {
+            try {
+                const response = await fetch(sheetUrl);
+                const data = await response.json();
+                console.log(data);
+    
+                const tbody = document.querySelector("#scoreboard tbody");
+                tbody.innerHTML = "";
+    
+                // Display FX latest row
+                let fxRow = document.createElement("tr");
+                fxRow.innerHTML = `<td>FX</td>` + data.FX.slice(1, 3).concat(data.FX.slice(7, 11)).map(value => `<td>${value}</td>`).join("");
+                // Display FX second latest row
+                let vt1 = document.createElement("tr");
+                vt1.innerHTML=  `<td>VT-1</td><td>${data.VT[1]}</td><td>${data.VT[2]}</td><td>${data.VT[7]}</td><td>${data.VT[14]}</td><td>${data.VT[16]}</td><td>${data.VT[17]}</td>`; ;
+
+                let vt2 = document.createElement("tr");
+                vt2.innerHTML=  `<td>VT-2</td><td>${data.VT[1]}</td><td>${data.VT[8]}</td><td>${data.VT[13]}</td><td>${data.VT[15]}</td><td>${data.VT[18]}</td><td>${data.VT[19]}</td>`; ;
+                tbody.appendChild(fxRow);
+                tbody.appendChild(vt1);
+                tbody.appendChild(vt2);
+    
+
+            } catch (error) {
+                console.error("Error fetching scores:", error);
+            }
+        }
+    
+        // Fetch scores every 5 seconds
+        setInterval(fetchScores, 5000);
+        fetchScores();
+    </script>
+    
+</body>
+</html>
