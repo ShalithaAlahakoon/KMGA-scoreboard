@@ -39,56 +39,76 @@
     </table>
     <script src="config.js"></script> <!-- Include the config file for URLs -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const table = document.querySelector("#vt-scoreboard");
-        const type = 'top10'; // Read type from HTML
-        const event = 'VT'; // Read event from HTML
+document.addEventListener("DOMContentLoaded", () => {
+    const table = document.querySelector("#vt-scoreboard");
+    const type = "top10"; // Event type
+    const event = "VT"; // Event name
 
-        if (!type || !event) {
-            console.error("Missing 'type' or 'event' attribute in the table.");
-            return;
+    if (!sheetLinks["WAG_12"]) {
+        console.error("Google Script URL is missing in config.js");
+        return;
+    }
+
+    const sheetUrl = `${sheetLinks["WAG_12"]}?type=${type}&event=${event}`; // Construct URL
+
+    let isFetching = false; // Prevent multiple concurrent requests
+    let retryDelay = 2000; // Initial retry delay (2s)
+
+    async function fetchTop10() {
+        if (isFetching) return; // Skip if a request is already running
+        isFetching = true;
+
+        try {
+            const response = await fetch(sheetUrl, { cache: "no-store" });
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+            const data = await response.json();
+            updateTable(data);
+
+            retryDelay = 5000; // Reset retry delay on success
+        } catch (error) {
+            console.error("Error fetching top 10:", error);
+            retryDelay = Math.min(retryDelay * 2, 30000); // Exponential backoff, max 30s
+        } finally {
+            isFetching = false;
         }
+    }
 
-        const sheetUrl = `${sheetLinks['WAG_12']}?type=${type}&event=${event}`; // Get dynamic URL
+    function updateTable(data) {
+        const tbody = table.querySelector("tbody");
+        tbody.innerHTML = ""; // Clear table before inserting new data
 
-        async function fetchTop10() {
-            try {
-                const response = await fetch(sheetUrl);
-                const data = await response.json();
-
-                const tbody = table.querySelector("tbody");
-                tbody.innerHTML = "";
-
-                data.slice(1).forEach(row => {
-                    if (row.rank !== "N/A") { // Skip "N/A" ranks
-                        let tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td>${row.rank}</td>
-                            <td>${row.bib}</td>
-                            <td>${row.name}</td>
-                            <td>${row.club}</td>
-                            <td>${row.difficulty1}</td>
-                            <td>${row.execution1}</td>
-                            <td>${row.penalty1}</td>
-                            <td>${row.score1}</td>
-                            <td>${row.difficulty2}</td>
-                            <td>${row.execution2}</td>
-                            <td>${row.penalty2}</td>
-                            <td>${row.score2}</td>
-                            <td>${row.finalScore}</td>
-                        `;
-                        tbody.appendChild(tr);
-                    }
-                });
-
-            } catch (error) {
-                console.error("Error fetching top 10:", error);
+        data.forEach(row => {
+            if (row.rank !== "N/A") { // Skip "N/A" ranks
+                let tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${row.rank}</td>
+                    <td>${row.bib}</td>
+                    <td>${row.name}</td>
+                    <td>${row.club}</td>
+                    <td>${row.difficulty1}</td>
+                    <td>${row.execution1}</td>
+                    <td>${row.penalty1}</td>
+                    <td>${row.score1}</td>
+                    <td>${row.difficulty2 || "-"}</td>
+                    <td>${row.execution2 || "-"}</td>
+                    <td>${row.penalty2 || "-"}</td>
+                    <td>${row.score2 || "-"}</td>
+                    <td>${row.finalScore}</td>
+                `;
+                tbody.appendChild(tr);
             }
-        }
+        });
+    }
 
-        setInterval(fetchTop10, 5000);
+    function startFetching() {
         fetchTop10();
-    });
+        setTimeout(startFetching, retryDelay);
+    }
+
+    startFetching(); // Start fetching loop
+});
+
 </script>
 
 </body>

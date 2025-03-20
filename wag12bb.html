@@ -1,60 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WAG U12 - BB </title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WAG U12 - BB</title>
+        <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         table { width: 80%; margin: auto; border-collapse: collapse; }
         th, td { border: 1px solid black; padding: 10px; text-align: center; }
         th { background-color: #f4b400; color: white; }
-    </style>
-</head>
-<body>
-    <h2>Junior National Gymnastics Championship – 2024
-        <br>
-        National Gymnastics Association of Sri Lanka
-        <br>Live Scoreboard - WAG U12 - BB
-    </h2>
-    <table id="bb-scoreboard">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>BIB Number</th>
-                <th>Name</th>
-                <th>Club</th>
-                <th>Difficulty</th>
-                <th>Execution</th>
-                <th>Penalty</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <script src="config.js"></script> <!-- Include config file -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const type = "top10"; // Type of request
-            const event = "BB"; // Event name
-
-            if (!sheetLinks["WAG_12"]) {
-                console.error("Google Script URL is missing in config.js");
-                return;
-            }
-
-            const sheetUrl = `${sheetLinks["WAG_12"]}?type=${type}&event=${event}`; // Dynamically set the URL
-
-            async function fetchTop10() {
-                try {
-                    const response = await fetch(sheetUrl);
-                    const data = await response.json();
-
+        </style>
+    </head>
+    <body>
+        <h2>
+            Junior National Gymnastics Championship – 2024
+            <br>
+            National Gymnastics Association of Sri Lanka
+            <br>
+            Live Scoreboard - WAG U12 - BB
+        </h2>
+        <table id="bb-scoreboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>BIB Number</th>
+                    <th>Name</th>
+                    <th>Club</th>
+                    <th>Difficulty</th>
+                    <th>Execution</th>
+                    <th>Penalty</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <script src="config.js"></script>
+        <!-- Include config file -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const type = "top10"; // Type of request
+                const event = "BB"; // Event name
+    
+                if (!sheetLinks["WAG_12"]) {
+                    console.error("Google Script URL is missing in config.js");
+                    return;
+                }
+    
+                const sheetUrl = `${sheetLinks["WAG_12"]}?type=${type}&event=${event}`; // Set the URL dynamically
+    
+                let isFetching = false; // Prevent multiple concurrent requests
+                let retryDelay = 5000; // Start with 2s delay for retries
+    
+                async function fetchTop10() {
+                    if (isFetching) return; // Skip if a request is already in progress
+                    isFetching = true;
+    
+                    try {
+                        const response = await fetch(sheetUrl, { cache: "no-store" });
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    
+                        const data = await response.json();
+                        updateTable(data);
+    
+                        retryDelay = 2000; // Reset retry delay on success
+                    } catch (error) {
+                        console.error("Error fetching top 10:", error);
+                        retryDelay = Math.min(retryDelay * 2, 30000); // Exponential backoff, max 30s
+                    } finally {
+                        isFetching = false;
+                    }
+                }
+    
+                function updateTable(data) {
                     const tbody = document.querySelector("#bb-scoreboard tbody");
-                    tbody.innerHTML = "";
-
-                    data.slice(1).forEach(row => {
+                    tbody.innerHTML = ""; // Clear existing rows
+    
+                    data.forEach(row => {
                         let tr = document.createElement("tr");
                         tr.innerHTML = `
                             <td>${row.rank}</td>
@@ -68,15 +89,15 @@
                         `;
                         tbody.appendChild(tr);
                     });
-
-                } catch (error) {
-                    console.error("Error fetching top 10:", error);
                 }
-            }
-
-            setInterval(fetchTop10, 5000);
-            fetchTop10();
-        });
-    </script>
-</body>
+    
+                function startFetching() {
+                    fetchTop10();
+                    setTimeout(startFetching, retryDelay);
+                }
+    
+                startFetching(); // Start the loop
+            });
+        </script>
+    </body>
 </html>

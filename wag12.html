@@ -58,52 +58,56 @@
             <tbody></tbody>
         </table>
         <!-- <button onclick="window.location.href='index.html'">Back</button> -->
+        <script src="config.js"></script> <!-- Include config file -->
         <script>
-        const sheetUrl = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhgjZT6sTBgqHyKcxxIs1yHaR2YZ-ceGeCnoXBUMdYbCHtv0DLsB3FnajOidvZZMxSeB_HmTJcG6PD4k7GZoI0vB_X9WaIrMiPfW8d0eJuGWuHOsAeNh8b-dKlFW6c6zOIPZRcgX-Jl8CW8peJtGCwPT18iLf3GWda-c23TJG9onIzcCMC7uRDDqJ5MBKydsaXxGE5a7NNZ-_7J4wyufGNc6eOBCMNniTIj5TyCyxnbP4d2aeQAzVOk7bEBBlRjGlQVEU1yuk3E9ibAnInjZodcwr1hVg&lib=Mmcr1SLV_AvmTZ3AhE2zAhPXWs9tUaF3r"; // Replace with actual URL
-
-        async function fetchScores() {
-            try {
-                const response = await fetch(sheetUrl);
-                const data = await response.json();
-                console.log(data);
-
-                const fxBbUbTbody = document.querySelector("#fx-bb-ub-scoreboard tbody");
-                const vtTbody = document.querySelector("#vt-scoreboard tbody");
-                
-                fxBbUbTbody.innerHTML = "";
-                vtTbody.innerHTML = "";
-
-                function addRowFxBbUb(event, rowData) {
-                    if (rowData) {
-                        let row = document.createElement("tr");
-                        row.innerHTML = `<td>${event}</td>` + rowData.map(value => `<td>${value}</td>`).slice(0, -1).join("");
-                        fxBbUbTbody.appendChild(row);
+            const sheetUrl = `${sheetLinks["WAG_12"]}`; // Replace with actual URL
+        
+            async function fetchScores() {
+                try {
+                    const response = await fetch(sheetUrl);
+                    const data = await response.json();
+                    console.log(data);
+        
+                    const fxBbUbTbody = document.querySelector("#fx-bb-ub-scoreboard tbody");
+                    const vtTbody = document.querySelector("#vt-scoreboard tbody");
+                    
+                    fxBbUbTbody.innerHTML = "";
+                    vtTbody.innerHTML = "";
+        
+                    function addRowFxBbUb(event, rowData) {
+                        if (rowData) {
+                            let row = document.createElement("tr");
+                            row.innerHTML = `<td>${event}</td>` + rowData.map(value => `<td>${value}</td>`).slice(0, -1).join("");
+                            fxBbUbTbody.appendChild(row);
+                        }
                     }
-                }
-
-                function addRowVt(rowData) {
-                    if (rowData) {
-                        let row = document.createElement("tr");
-                        row.innerHTML = rowData.map(value => `<td>${value}</td>`).slice(0, -1).join("");
-                        vtTbody.appendChild(row);
+        
+                    function addRowVt(rowData) {
+                        if (rowData) {
+                            let row = document.createElement("tr");
+                            row.innerHTML = rowData.map(value => `<td>${value}</td>`).slice(0, -1).join("");
+                            vtTbody.appendChild(row);
+                        }
                     }
+        
+                    // Add rows for FX, BB, UB
+                    addRowFxBbUb("FX", data.FX);
+                    addRowFxBbUb("BB", data.BB);
+                    addRowFxBbUb("UB", data.UB);
+        
+                    // Add row for VT (VT has a different structure)
+                    addRowVt(data.VT);
+        
+                } catch (error) {
+                    console.error("Error fetching scores:", error);
                 }
-
-                // Add rows for FX, BB, UB
-                addRowFxBbUb("FX", data.FX);
-                addRowFxBbUb("BB", data.BB);
-                addRowFxBbUb("UB", data.UB);
-
-                // Add row for VT (VT has a different structure)
-                addRowVt(data.VT);
-
-            } catch (error) {
-                console.error("Error fetching scores:", error);
+        
+                // Wait 5 seconds before making the next request (AFTER current request completes)
+                setTimeout(fetchScores, 1000);
             }
-        }
-
-        setInterval(fetchScores, 5000);
-        fetchScores();
+        
+            fetchScores(); // Start the first request
         </script>
+        
     </body>
 </html>
