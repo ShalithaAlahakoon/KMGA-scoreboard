@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tbody = table.querySelector("tbody");
         tbody.innerHTML = ""; // Clear table before inserting new data
 
-        data.forEach(row => {
+        data.slice(1).forEach(row => {
             if (row.rank !== "N/A") { // Skip "N/A" ranks
                 let tr = document.createElement("tr");
                 tr.innerHTML = `
