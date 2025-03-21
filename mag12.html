@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Scoreboard - Male Events</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        table { width: 80%; margin: auto; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid black; padding: 10px; text-align: center; }
+        th { background-color: #4285F4; color: white; }
+    </style>
+</head>
+<body>
+
+    <h2>Junior National Gymnastics Championship – 2024
+        <br>
+        National Gymnastics Association of Sri Lanka
+        <br>Live Scoreboard - Male Events
+    </h2>
+
+    <!-- Table for FX, PB, PH, RR, HB -->
+    <h2>FX, PB, PH, RR, HB Scores</h2>
+    <table id="fx-pb-ph-rr-hb-scoreboard">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>BIB Number</th>
+                <th>Name</th>
+                <th>Club</th>
+                <th>Difficulty</th>
+                <th>Execution</th>
+                <th>Penalty</th>
+                <th>Final Score</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Table for VT -->
+    <h2>VT Scores</h2>
+    <table id="vt-scoreboard">
+        <thead>
+            <tr>
+                <th>BIB Number</th>
+                <th>Name</th>
+                <th>Club</th>
+                <th>Difficulty 1</th>
+                <th>Execution 1</th>
+                <th>Penalty 1</th>
+                <th>Score 1</th>
+                <th>Difficulty 2</th>
+                <th>Execution 2</th>
+                <th>Penalty 2</th>
+                <th>Score 2</th>
+                <th>Final Score</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="config.js"></script> <!-- Include config file -->
+    <script>
+        const sheetUrl = `${sheetLinks["MAG_12"]}`; // Use the Male Scores Google Sheet
+
+        async function fetchScores() {
+            try {
+                const response = await fetch(sheetUrl);
+                const data = await response.json();
+                console.log(data);
+
+                const fxPbPhRrHbTbody = document.querySelector("#fx-pb-ph-rr-hb-scoreboard tbody");
+                const vtTbody = document.querySelector("#vt-scoreboard tbody");
+
+                fxPbPhRrHbTbody.innerHTML = "";
+                vtTbody.innerHTML = "";
+
+                function addRowFxPbPhRrHb(event, rowData) {
+                    if (rowData) {
+                        let row = document.createElement("tr");
+                        row.innerHTML = `<td>${event}</td>` + rowData.map(value => `<td>${value}</td>`).slice(0, -1).join("");
+                        fxPbPhRrHbTbody.appendChild(row);
+                    }
+                }
+
+                function addRowVt(rowData) {
+                    if (rowData) {
+                        let row = document.createElement("tr");
+                        row.innerHTML = rowData.map(value => `<td>${value}</td>`).slice(0, -1).join("");
+                        vtTbody.appendChild(row);
+                    }
+                }
+
+                // Add rows for FX, PB, PH, RR, HB
+                addRowFxPbPhRrHb("FX", data.FX);
+                addRowFxPbPhRrHb("PB", data.PB);
+                addRowFxPbPhRrHb("PH", data.PH);
+                addRowFxPbPhRrHb("RR", data.RR);
+                addRowFxPbPhRrHb("HB", data.HB);
+
+                // Add row for VT (VT has a different structure)
+                addRowVt(data.VT);
+
+            } catch (error) {
+                console.error("Error fetching scores:", error);
+            }
+
+            // Wait 5 seconds before making the next request (AFTER current request completes)
+            setTimeout(fetchScores, 5000);
+        }
+
+        fetchScores(); // Start the first request
+    </script>
+
+</body>
+</html>
