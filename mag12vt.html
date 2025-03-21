@@ -86,15 +86,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>${row.bib}</td>
                     <td>${row.name}</td>
                     <td>${row.club}</td>
-                    <td>${row.difficulty1}</td>
-                    <td>${row.execution1}</td>
-                    <td>${row.penalty1}</td>
-                    <td>${row.score1}</td>
-                    <td>${row.difficulty2 || "-"}</td>
-                    <td>${row.execution2 || "-"}</td>
-                    <td>${row.penalty2 || "-"}</td>
-                    <td>${row.score2 || "-"}</td>
-                    <td>${row.finalScore}</td>
+                     <td>${parseFloat(row.difficulty1).toFixed(2)}</td>
+                        <td>${parseFloat(row.execution1).toFixed(2)}</td>
+                        <td>${parseFloat(row.penalty1).toFixed(2)}</td>
+                        <td>${parseFloat(row.score1).toFixed(2)}</td>
+                    <td>${row.difficulty2 ? parseFloat(row.difficulty2).toFixed(2) : "-"}</td>
+                    <td>${row.execution2 ? parseFloat(row.execution2).toFixed(2) : "-"}</td>
+                    <td>${row.penalty2 ? parseFloat(row.penalty2).toFixed(2) : "-"}</td>
+                    <td>${row.score2 ? parseFloat(row.score2).toFixed(2) : "-"}</td>
+                    <td>${row.finalScore ? parseFloat(row.finalScore).toFixed(2) : "-"}</td>
                 `;
                 tbody.appendChild(tr);
             }

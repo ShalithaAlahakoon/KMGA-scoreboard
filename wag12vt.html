@@ -1,44 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WAG U12 - VT</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WAG U12 - VT</title>
+        <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         table { width: 90%; margin: auto; border-collapse: collapse; }
         th, td { border: 1px solid black; padding: 10px; text-align: center; }
         th { background-color: #f4b400; color: white; }
-    </style>
-</head>
-<body>
-    <h2>Junior National Gymnastics Championship – 2024
-        <br>
-        National Gymnastics Association of Sri Lanka
-        <br>Live Scoreboard - WAG U12 - VT
-    </h2>
-    <table id="vt-scoreboard">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>BIB Number</th>
-                <th>Name</th>
-                <th>Club</th>
-                <th>Difficulty 1</th>
-                <th>Execution 1</th>
-                <th>Penalty 1</th>
-                <th>Score 1</th>
-                <th>Difficulty 2</th>
-                <th>Execution 2</th>
-                <th>Penalty 2</th>
-                <th>Score 2</th>
-                <th>Final Score</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    <script src="config.js"></script> <!-- Include the config file for URLs -->
-<script>
+        </style>
+    </head>
+    <body>
+        <h2>
+            Junior National Gymnastics Championship – 2024
+            <br>
+            National Gymnastics Association of Sri Lanka
+            <br>
+            Live Scoreboard - WAG U12 - VT
+        </h2>
+        <table id="vt-scoreboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>BIB Number</th>
+                    <th>Name</th>
+                    <th>Club</th>
+                    <th>Difficulty 1</th>
+                    <th>Execution 1</th>
+                    <th>Penalty 1</th>
+                    <th>Score 1</th>
+                    <th>Difficulty 2</th>
+                    <th>Execution 2</th>
+                    <th>Penalty 2</th>
+                    <th>Score 2</th>
+                    <th>Final Score</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <script src="config.js"></script>
+        <!-- Include the config file for URLs -->
+        <script>
 document.addEventListener("DOMContentLoaded", () => {
     const table = document.querySelector("#vt-scoreboard");
     const type = "top10"; // Event type
@@ -78,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tbody = table.querySelector("tbody");
         tbody.innerHTML = ""; // Clear table before inserting new data
 
-        data.forEach(row => {
+        data.slice(1).forEach(row => {
             if (row.rank !== "N/A") { // Skip "N/A" ranks
                 let tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -86,15 +89,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>${row.bib}</td>
                     <td>${row.name}</td>
                     <td>${row.club}</td>
-                    <td>${row.difficulty1}</td>
-                    <td>${row.execution1}</td>
-                    <td>${row.penalty1}</td>
-                    <td>${row.score1}</td>
-                    <td>${row.difficulty2 || "-"}</td>
-                    <td>${row.execution2 || "-"}</td>
-                    <td>${row.penalty2 || "-"}</td>
-                    <td>${row.score2 || "-"}</td>
-                    <td>${row.finalScore}</td>
+                   <td>${parseFloat(row.difficulty1).toFixed(2)}</td>
+                        <td>${parseFloat(row.execution1).toFixed(2)}</td>
+                        <td>${parseFloat(row.penalty1).toFixed(2)}</td>
+                        <td>${parseFloat(row.score1).toFixed(2)}</td>
+                    <td>${row.difficulty2 ? parseFloat(row.difficulty2).toFixed(2) : "-"}</td>
+                    <td>${row.execution2 ? parseFloat(row.execution2).toFixed(2) : "-"}</td>
+                    <td>${row.penalty2 ? parseFloat(row.penalty2).toFixed(2) : "-"}</td>
+                    <td>${row.score2 ? parseFloat(row.score2).toFixed(2) : "-"}</td>
+                    <td>${row.finalScore ? parseFloat(row.finalScore).toFixed(2) : "-"}</td>
                 `;
                 tbody.appendChild(tr);
             }
@@ -108,8 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     startFetching(); // Start fetching loop
 });
-
-</script>
-
-</body>
+        </script>
+    </body>
 </html>

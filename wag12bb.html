@@ -75,17 +75,17 @@
                     const tbody = document.querySelector("#bb-scoreboard tbody");
                     tbody.innerHTML = ""; // Clear existing rows
     
-                    data.forEach(row => {
+                    data.slice(1).forEach(row => {
                         let tr = document.createElement("tr");
                         tr.innerHTML = `
                             <td>${row.rank}</td>
                             <td>${row.bib}</td>
                             <td>${row.name}</td>
                             <td>${row.club}</td>
-                            <td>${row.difficulty1}</td>
-                            <td>${row.execution1}</td>
-                            <td>${row.penalty1}</td>
-                            <td>${row.score1}</td>
+                           <td>${parseFloat(row.difficulty1).toFixed(2)}</td>
+                        <td>${parseFloat(row.execution1).toFixed(2)}</td>
+                        <td>${parseFloat(row.penalty1).toFixed(2)}</td>
+                        <td>${parseFloat(row.score1).toFixed(2)}</td>
                         `;
                         tbody.appendChild(tr);
                     });
