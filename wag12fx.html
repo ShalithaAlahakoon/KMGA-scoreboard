@@ -72,7 +72,7 @@
                 const tbody = document.querySelector("#fx-scoreboard tbody");
                 tbody.innerHTML = ""; // Clear existing rows
 
-                data.forEach(row => {
+                data.slice(1).forEach(row => {
                     let tr = document.createElement("tr");
                     tr.innerHTML = `
                         <td>${row.rank}</td>
