@@ -45,14 +45,14 @@
                 <th>BIB Number</th>
                 <th>Name</th>
                 <th>Club</th>
-                <th>Difficulty 1</th>
-                <th>Execution 1</th>
-                <th>Penalty 1</th>
-                <th>Score 1</th>
+                <th>Difficulty </th>
+                <th>Execution </th>
+                <th>Penalty </th>
+                <!-- <th>Score 1</th>
                 <th>Difficulty 2</th>
                 <th>Execution 2</th>
                 <th>Penalty 2</th>
-                <th>Score 2</th>
+                <th>Score 2</th> -->
                 <th>Final Score</th>
             </tr>
         </thead>
@@ -86,7 +86,7 @@
                 function addRowVt(rowData) {
                     if (rowData) {
                         let row = document.createElement("tr");
-                        row.innerHTML = rowData.map(value => `<td>${value}</td>`).slice(0, -1).join("");
+                        row.innerHTML = rowData.map(value => `<td>${value}</td>`).slice(0, -6).join("");
                         vtTbody.appendChild(row);
                     }
                 }
